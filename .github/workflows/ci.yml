@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install pnpm
+        run: npm install -g pnpm@latest
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '23'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm run compile
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Install XVFB for testing with VS Code
+        run: |
+          sudo apt-get -y update
+          sudo apt-get -y install --fix-missing xvfb
+
+      - name: Test using VS Code
+        # commands before `xvfb-run -a ppm run test` avoid these ERROR messages:
+        # - Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+        # - Exiting GPU process due to errors during initialization
+        run: |
+          export XDG_RUNTIME_DIR=/run/user/$(id -u)
+          export DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus
+          dbus-daemon --session --address=$DBUS_SESSION_BUS_ADDRESS --nofork --nopidfile --syslog-only &
+          mkdir ~/.vscode && echo '{ "disable-hardware-acceleration": true }' > ~/.vscode/argv.json
+          xvfb-run -a pnpm run test
