@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "ES2020",
+        "rootDir": "test",
+        "outDir": "out-test",
+        "sourceMap": true,
+        "types": [
+            "mocha",
+            "node",
+            "glob"
+        ]
+    },
+    "include": [
+        "test/**/*.ts"
+    ]
+}
