@@ -1,1 +1,156 @@
-# namespacer
+[![CI](https://github.com/onurmicoogullari/namespacer/actions/workflows/ci.yml/badge.svg)](https://github.com/onurmicoogullari/namespacer/actions/workflows/ci.yml)  
+
+# Namespacer
+
+Effortlessly maintain file-scoped C# namespaces in VS Code: this extension analyzes your project and solution layout (including `.csproj` and `Directory.Build.props`) to insert or update namespaces so they always reflect your folder hierarchy and configured `RootNamespace`.
+
+---
+
+## ✨ Features
+
+- 📂 Detects the closest `.csproj` file (or solution root) relative to the current C# file.  
+- 🔍 Supports reading `<RootNamespace>` from:
+  - the project’s `.csproj`
+  - any `Directory.Build.props` up to the solution level  
+- 📁 Builds namespaces by appending folder names under the project root.  
+- 📜 Uses **file-scoped namespaces** (C# 10+ style).  
+- 🛠 Multi-project workspaces & `.sln` boundaries respected.  
+- 🔄 Replaces an existing `namespace` declaration cleanly if present.  
+- 📄 **Empty** or **namespace-only** files get a fresh namespace at the top.  
+- 🧹 Ensures consistent spacing:
+  - exactly one blank line between the last `using` and the `namespace` declaration  
+  - exactly one blank line between the `namespace` declaration and the first type (`class`, `interface` or `enum`).  
+
+---
+
+## 📦 Installation
+
+Install from the [Visual Studio Code Marketplace](#) (link coming soon), or:
+
+1. Clone this repo.  
+2. Run `pnpm install`.  
+3. Run `pnpm run compile`.  
+4. Press **F5** inside VS Code to launch an Extension Development Host.
+
+---
+
+## ⚙️ Usage
+
+1. Open any `.cs` file.  
+2. Open the Command Palette (`Ctrl+Shift+P` on Windows or `CMD+Shift+P` on Mac).  
+3. Run **Namespacer: Fix Namespace**.
+
+**What happens:**
+
+- Locates the closest `.csproj` and `Directory.Build.props` (or solution root).  
+- Reads `<RootNamespace>` (or falls back to project name).  
+- Calculates the full namespace by appending folders.  
+- Deletes any blank lines between the `using` block and your code.  
+- Inserts or replaces a file-scoped `namespace Foo.Bar;` with tidy spacing.
+
+---
+
+## 🛠 Commands
+
+| Command                    | Description                                      |
+|:---------------------------|:-------------------------------------------------|
+| `namespacer.fixNamespace`  | Add or fix the namespace in the active C# file.  |
+
+---
+
+## 🧠 How it Works
+
+1. **Find project context**  
+   - Walks upward from the current file.  
+   - Stops at the first `.csproj`, then checks `Directory.Build.props` up to the solution root.  
+   - If multiple projects exist in one folder, prompts you to choose.
+
+2. **Calculate root namespace**  
+   - Reads `<RootNamespace>` (or defaults to the `.csproj` filename).  
+   - Appends any folder segments under the project root.
+
+3. **Clean whitespace**  
+   - Deletes all blank lines between the last `using` and the first non-using code.  
+   - Enforces exactly one blank line before *and* after the `namespace` declaration.  
+   - Special-cases empty or namespace-only files.
+
+4. **Insert namespace**  
+   - Leaves **one** blank line above the new namespace (if `using`s exist).  
+   - Emits `namespace Foo.Bar;` as a file-scoped namespace.  
+   - Leaves **one** blank line between the namespace declaration and the first type.
+
+---
+
+## 📝 Examples
+
+### Example 1: With RootNamespace
+
+```
+src/
+  Proj1/
+    Proj1.csproj      (RootNamespace: MyCompany.Proj1)
+    Services/
+      UserService.cs
+```
+
+**Before:**
+```csharp
+using System;
+
+…lots of blank lines…
+public class UserService { }
+```
+
+**After “Fix Namespace”:**
+```csharp
+using System;
+
+namespace MyCompany.Proj1.Services;
+
+public class UserService
+{
+    // …
+}
+```
+
+### Example 2: Without RootNamespace
+
+```
+src/
+  Proj2/
+    Proj2.csproj      (no `<RootNamespace>` set)
+    Controllers/
+      HomeController.cs
+```
+
+**After:**
+```csharp
+using System;
+
+namespace Proj2.Controllers;
+
+public class HomeController
+{
+    // …
+}
+```
+
+### Example 3: Empty or Namespace-Only File
+
+- **Empty file** → becomes:
+  ```csharp
+  namespace MyCompany.MyProj;
+  ```
+- **Only namespace present** → gets replaced with the correct one.
+
+---
+
+## 📄 License
+
+This project is licensed under the [GPL-3.0-or-later](LICENSE).
+
+---
+
+## 💬 Contributing
+
+PRs and issues are welcome.
