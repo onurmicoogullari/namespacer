@@ -1,0 +1,79 @@
+{
+  "name": "namespacer",
+  "displayName": "Namespacer",
+  "description": "Effortlessly maintain file-scoped C# namespaces in VS Code: this extension analyzes your project and solution layout (including .csproj and Directory.Build.props) to insert or update namespaces so they always reflect your folder hierarchy and configured RootNamespace.",
+  "version": "1.0.0",
+  "publisher": "onurmicoogullari",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onurmicoogullari/namespacer.git"
+  },
+  "files": [
+    "out/extension.js",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "vscode": "^1.99.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:csharp"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "namespacer.fixNamespace",
+        "title": "Namespacer: Fix Namespace"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "namespacer.fixNamespace",
+          "when": "resourceLangId == csharp",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "namespacer.fixNamespace",
+          "when": "resourceLangId == csharp"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run build",
+    "build": "tsc -p ./ && esbuild src/extension.ts --bundle --platform=node --external:vscode --outfile=out/extension.js --sourcemap",
+    "lint": "eslint src",
+    "test": "pnpm run build && vscode-test --extensionDevelopmentPath=. --extensionTestsPath=out/test/runTest.js",
+    "deploy": "pnpm vsce publish"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.99.0",
+    "@types/xml2js": "^0.4.14",
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.4.2",
+    "esbuild": "^0.25.5",
+    "eslint": "^9.23.0",
+    "glob": "^11.0.2",
+    "mocha": "^11.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "packageManager": "pnpm@10.10.0+sha512.d615db246fe70f25dcfea6d8d73dee782ce23e2245e3c4f6f888249fb568149318637dca73c2c5c8ef2a4ca0d5657fb9567188bfab47f566d1ee6ce987815c39",
+  "dependencies": {
+    "xml2js": "^0.6.2"
+  }
+}
