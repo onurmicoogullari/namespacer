@@ -1,7 +1,9 @@
+<img src="media/logotype.png" alt="Namespacer Logo" width="90"/>  
+
 [![CI](https://github.com/onurmicoogullari/namespacer/actions/workflows/ci.yml/badge.svg)](https://github.com/onurmicoogullari/namespacer/actions/workflows/ci.yml)  
+[![CD](https://github.com/onurmicoogullari/namespacer/actions/workflows/cd.yml/badge.svg)](https://github.com/onurmicoogullari/namespacer/actions/workflows/cd.yml)  
 
 # Namespacer
-
 Effortlessly maintain file-scoped C# namespaces in VS Code: this extension analyzes your project and solution layout (including `.csproj` and `Directory.Build.props`) to insert or update namespaces so they always reflect your folder hierarchy and configured `RootNamespace`.
 
 ---
