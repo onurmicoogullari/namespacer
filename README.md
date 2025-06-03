@@ -6,7 +6,6 @@
 # Namespacer
 Effortlessly maintain file-scoped C# namespaces in VS Code: this extension analyzes your project and solution layout (including `.csproj` and `Directory.Build.props`) to insert or update namespaces so they always reflect your folder hierarchy and configured `RootNamespace`.
 
----
 
 ## ✨ Features
 
@@ -23,7 +22,6 @@ Effortlessly maintain file-scoped C# namespaces in VS Code: this extension analy
   - exactly one blank line between the last `using` and the `namespace` declaration  
   - exactly one blank line between the `namespace` declaration and the first type (`class`, `interface` or `enum`).  
 
----
 
 ## 📦 Installation
 
@@ -34,7 +32,6 @@ Install from the [Visual Studio Code Marketplace](#) (link coming soon), or:
 3. Run `pnpm run compile`.  
 4. Press **F5** inside VS Code to launch an Extension Development Host.
 
----
 
 ## ⚙️ Usage
 
@@ -50,7 +47,6 @@ Install from the [Visual Studio Code Marketplace](#) (link coming soon), or:
 - Deletes any blank lines between the `using` block and your code.  
 - Inserts or replaces a file-scoped `namespace Foo.Bar;` with tidy spacing.
 
----
 
 ## 🛠 Commands
 
@@ -58,7 +54,6 @@ Install from the [Visual Studio Code Marketplace](#) (link coming soon), or:
 |:---------------------------|:-------------------------------------------------|
 | `namespacer.fixNamespace`  | Add or fix the namespace in the active C# file.  |
 
----
 
 ## 🧠 How it Works
 
@@ -80,8 +75,6 @@ Install from the [Visual Studio Code Marketplace](#) (link coming soon), or:
    - Leaves **one** blank line above the new namespace (if `using`s exist).  
    - Emits `namespace Foo.Bar;` as a file-scoped namespace.  
    - Leaves **one** blank line between the namespace declaration and the first type.
-
----
 
 ## 📝 Examples
 
@@ -143,15 +136,13 @@ public class HomeController
   ```csharp
   namespace MyCompany.MyProj;
   ```
-- **Only namespace present** → gets replaced with the correct one.
+- **Only namespace present** → gets replaced with the correct one.  
 
----
 
 ## 📄 License
 
 This project is licensed under the [GPL-3.0-or-later](LICENSE).
 
----
 
 ## 💬 Contributing
 
