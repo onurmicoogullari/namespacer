@@ -18,6 +18,7 @@ Effortlessly maintain file-scoped C# namespaces in VS Code: this extension analy
 - 🛠 Multi-project workspaces & `.sln` boundaries respected.  
 - 🔄 Replaces an existing `namespace` declaration cleanly if present.  
 - 📄 **Empty** or **namespace-only** files get a fresh namespace at the top.  
+- ⚡ Bulk-fix picker lets you update just the active file or sweep an entire directory, project, or solution (across multiple workspace folders) in one go.  
 - 🧹 Ensures consistent spacing:
   - exactly one blank line between the last `using` and the `namespace` declaration  
   - exactly one blank line between the `namespace` declaration and the first type (`class`, `interface` or `enum`).  
@@ -25,11 +26,11 @@ Effortlessly maintain file-scoped C# namespaces in VS Code: this extension analy
 
 ## 📦 Installation
 
-Install from the [Visual Studio Code Marketplace](#) (link coming soon), or:
+Install from the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=onurmicoogullari.namespacer) or run from source by following these steps:
 
 1. Clone this repo.  
 2. Run `pnpm install`.  
-3. Run `pnpm run compile`.  
+3. Run `pnpm run build`.  
 4. Press **F5** inside VS Code to launch an Extension Development Host.
 
 
@@ -37,22 +38,21 @@ Install from the [Visual Studio Code Marketplace](#) (link coming soon), or:
 
 1. Open any `.cs` file.  
 2. Open the Command Palette (`Ctrl+Shift+P` on Windows or `CMD+Shift+P` on Mac).  
-3. Run **Namespacer: Fix Namespace**.
-
+3. Run **Namespacer: Fix Namespace(s) in…** and choose whether to fix the active File, its Directory, the containing Project, or an entire Solution.
 **What happens:**
 
 - Locates the closest `.csproj` and `Directory.Build.props` (or solution root).  
 - Reads `<RootNamespace>` (or falls back to project name).  
 - Calculates the full namespace by appending folders.  
 - Deletes any blank lines between the `using` block and your code.  
-- Inserts or replaces a file-scoped `namespace Foo.Bar;` with tidy spacing.
+- Inserts or replaces a file-scoped `namespace Foo.Bar;` with tidy spacing, even in multi-root workspaces where solution files may live in different folders.
 
 
 ## 🛠 Commands
 
-| Command                    | Description                                      |
-|:---------------------------|:-------------------------------------------------|
-| `namespacer.fixNamespace`  | Add or fix the namespace in the active C# file.  |
+| Command                        | Description                                                                                  |
+|:-------------------------------|:---------------------------------------------------------------------------------------------|
+| `namespacer.fixNamespaces`     | Opens a picker so you can fix the active File, its Directory, the containing Project, or a Solution. |
 
 
 ## 🧠 How it Works
@@ -96,7 +96,7 @@ using System;
 public class UserService { }
 ```
 
-**After “Fix Namespace”:**
+**After “Fix Namespaces…” (File scope):**
 ```csharp
 using System;
 
@@ -152,6 +152,6 @@ PRs and issues are welcome.
 
 - Run `pnpm exec changeset` (or `pnpm dlx changeset`) whenever you make a change that should ship. Describe the change and choose its semver bump.
 - The **Changesets** workflow opens/updates an “Apply changesets” PR that bumps `package.json`, updates release notes, and keeps `main`’s version in sync with the next release.
-- When that PR is merged, the workflow runs `pnpm changeset tag` to push a tag like `v1.2.3`. This tag is the single source of truth for the VS Code extension version.
+- When that PR is merged, the workflow runs `pnpm changeset tag`, pushes the resulting `v1.2.3` tag to GitHub, and keeps `main` aligned with the release.
 - The **CD** workflow listens to those tags, forces the extension version in `package.json` to match the tag, builds, and publishes it via `vsce` (using the `VSCE_PAT` secret).
 - Configure the `CHANGESETS_PAT` GitHub secret with a token that can create branches/PRs and push tags so the release automation can operate end-to-end.

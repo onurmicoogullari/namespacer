@@ -1,0 +1,6 @@
+{
+    "solution": "BulkSolution",
+    "projects": [
+        "BulkSolution.csproj"
+    ]
+}

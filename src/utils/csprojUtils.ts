@@ -2,7 +2,12 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { Parser } from 'xml2js';
 
-export async function findClosestCsproj(filePath: string): Promise<string | null> {
+export interface CsprojSearchOptions {
+    selectionCache?: Map<string, string>;
+    stopAtSolution?: boolean;
+}
+
+export async function findClosestCsproj(filePath: string, options?: CsprojSearchOptions): Promise<string | null> {
     let dir = path.dirname(filePath);
 
     while (true) {
@@ -12,27 +17,34 @@ export async function findClosestCsproj(filePath: string): Promise<string | null
         if (csprojFiles.length === 1) {
             return path.join(dir, csprojFiles[0][0]);
         } else if (csprojFiles.length > 1) {
+            const cached = options?.selectionCache?.get(dir);
+            if (cached) {
+                return cached;
+            }
+
             const picked = await vscode.window.showQuickPick(
                 csprojFiles.map(([name, _]) => ({
                     label: name,
                     description: path.join(dir, name),
                 })),
                 {
-                    placeHolder: 'Multiple .csproj files found. Select the project to use for namespace.'
+                    placeHolder: 'Multiple .csproj files found. Select the project to use for namespace(s).'
                 }
             );
 
-            if (picked) {
-                return picked.description ?? null;
-            } else {
-                return null;
+            if (picked?.description) {
+                options?.selectionCache?.set(dir, picked.description);
+                return picked.description;
             }
+
+            return null;
         }
 
-        const slnFiles = files.filter(([name, _]) => name.endsWith('.sln'));
-
-        if (slnFiles.length > 0) {
-            return null;
+        if (options?.stopAtSolution !== false) {
+            const slnFiles = files.filter(([name, _]) => name.endsWith('.sln') || name.endsWith('.slnx'));
+            if (slnFiles.length > 0) {
+                return null;
+            }
         }
 
         const parentDir = path.dirname(dir);
@@ -43,9 +55,15 @@ export async function findClosestCsproj(filePath: string): Promise<string | null
     }
 }
 
-export async function findRootNamespace(csprojPath: string, slnPath?: string): Promise<string> {
+export async function findRootNamespace(csprojPath: string, slnPath?: string, cache?: Map<string, string>): Promise<string> {
+    const cacheKey = `${csprojPath}::${slnPath ?? ''}`;
+    if (cache?.has(cacheKey)) {
+        return cache.get(cacheKey)!;
+    }
+
     const csprojRootNamespace = await readRootNamespace(csprojPath);
     if (csprojRootNamespace) {
+        cache?.set(cacheKey, csprojRootNamespace);
         return csprojRootNamespace;
     }
 
@@ -72,7 +90,9 @@ export async function findRootNamespace(csprojPath: string, slnPath?: string): P
         dir = parentDir;
     }
 
-    return path.basename(csprojPath, '.csproj');
+    const fallback = path.basename(csprojPath, '.csproj');
+    cache?.set(cacheKey, fallback);
+    return fallback;
 }
 
 async function readRootNamespace(filePath: string): Promise<string | null> {
