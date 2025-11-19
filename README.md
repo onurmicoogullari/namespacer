@@ -147,3 +147,11 @@ This project is licensed under the [GPL-3.0-or-later](LICENSE).
 ## 💬 Contributing
 
 PRs and issues are welcome.
+
+## 🚀 Releases & Versioning
+
+- Run `pnpm exec changeset` (or `pnpm dlx changeset`) whenever you make a change that should ship. Describe the change and choose its semver bump.
+- The **Changesets** workflow opens/updates an “Apply changesets” PR that bumps `package.json`, updates release notes, and keeps `main`’s version in sync with the next release.
+- When that PR is merged, the workflow runs `pnpm changeset tag` to push a tag like `v1.2.3`. This tag is the single source of truth for the VS Code extension version.
+- The **CD** workflow listens to those tags, forces the extension version in `package.json` to match the tag, builds, and publishes it via `vsce` (using the `VSCE_PAT` secret).
+- Configure the `CHANGESETS_PAT` GitHub secret with a token that can create branches/PRs and push tags so the release automation can operate end-to-end.
