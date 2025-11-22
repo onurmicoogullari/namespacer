@@ -3,7 +3,7 @@
   "displayName": "Namespacer",
   "icon": "media/logotype.png",
   "description": "Effortlessly maintain file-scoped C# namespaces in VS Code: this extension analyzes your project and solution layout (including .csproj and Directory.Build.props) to insert or update namespaces so they always reflect your folder hierarchy and configured RootNamespace.",
-  "version": "1.0.1",
+  "version": "0.0.0",
   "publisher": "onurmicoogullari",
   "repository": {
     "type": "git",
@@ -57,6 +57,7 @@
     "deploy": "pnpm vsce publish"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.7",
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",

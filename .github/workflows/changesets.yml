@@ -1,0 +1,44 @@
+name: Changesets
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    name: Release changesets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.14.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 23
+          cache: pnpm
+
+      - name: Install packages
+        run: pnpm install --frozen-lockfile
+
+      - name: Publish with Changesets
+        uses: changesets/action@v1
+        with:
+          createGithubReleases: false
+          publish: pnpm changeset tag
+          commit: Apply changesets
+          commitMode: github-api
+        env:
+          GITHUB_TOKEN: ${{ secrets.CHANGESETS_PAT }}
