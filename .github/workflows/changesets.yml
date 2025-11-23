@@ -35,10 +35,14 @@ jobs:
 
       - name: Publish with Changesets
         uses: changesets/action@v1
+        id: changesets
         with:
           createGithubReleases: false
-          publish: pnpm changeset tag && git push --follow-tags
+          publish: pnpm changeset tag
           commit: Apply changesets
           commitMode: github-api
         env:
           GITHUB_TOKEN: ${{ secrets.CHANGESETS_PAT }}
+
+      - name: Push tags
+        run: git push --follow-tags
